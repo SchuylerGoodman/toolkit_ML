@@ -17,6 +17,7 @@ public:
         : labeled(false)
     {}
 
+    // There's something funky going on with depth in this constructor TODO
     TreeNode(const TreeNode& other)
         : labeled(other.labeled), label(other.label), labelName(other.labelName),
         labels(other.labels), attr(other.attr), attrName(other.attrName),
