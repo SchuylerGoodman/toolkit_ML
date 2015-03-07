@@ -14,10 +14,11 @@ class TreeNode
 public:
 
     TreeNode()
-        : labeled(false)
+        : labeled(false), label(-1), labelName(""),
+        attr(-1), attrName(""),
+        value(-1), valueName(""), depth(1)
     {}
 
-    // There's something funky going on with depth in this constructor TODO
     TreeNode(const TreeNode& other)
         : labeled(other.labeled), label(other.label), labelName(other.labelName),
         labels(other.labels), attr(other.attr), attrName(other.attrName),
@@ -58,6 +59,9 @@ public:
     const std::string getValueName();
 
     const size_t getDepth();
+
+    // Gets the maximum depth from the context of this
+    const size_t getMaxDepth();
     
     //++++++++++++++++++++++public methods++++++++++++++++++++++
 
@@ -67,20 +71,25 @@ public:
     // Factory function for new NodePtr objects
     static NodePtr make();
 
-    // Factory copy method for NodePtr objects
+    // Factory deep copy method for NodePtr objects
     static NodePtr copy(NodePtr);
 
     // Checks if this node has any child nodes
     bool isLeaf() { return children.empty(); };
+
+    // Disables the node - makes it a leaf node
+    void disable();
+
+    // Enables the node - reattaches the node's children
+    void enable();
 
     // Prints the tree to std out
     static void printTree(NodePtr);
     
 private:
 
-    static size_t MAX_DEPTH;
-
     std::vector< NodePtr > children;
+    std::vector< NodePtr > disabled_children;
 
     bool labeled;
     double label;

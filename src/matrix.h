@@ -62,7 +62,7 @@ public:
 	void loadARFF(std::string filename);
 
     // creates an enum value for UNKNOWN_VALUE in the metadata
-    void keepUnknown();
+    void useUnknown();
 
 	// Sets the size of the matrix. (Wipes out any data in the matrix.)
 	void setSize(size_t rows, size_t cols);

@@ -1,10 +1,6 @@
 
 #include "treenode.h"
 
-// initialize static member - this is a hack because I don't want to traverse the tree to get it
-// I could make a shared_ptr<size_t> to hold it TODO
-size_t TreeNode::MAX_DEPTH = 0;
-
 TreeNode::NodePtr TreeNode::make()
 {
     NodePtr newNode = boost::make_shared<TreeNode> ();
@@ -22,13 +18,7 @@ TreeNode::NodePtr TreeNode::copy(NodePtr other)
 TreeNode::NodePtr TreeNode::add()
 {
     NodePtr newNode = TreeNode::make();
-    newNode->setAttr(-1, "");
-    newNode->setValue(-1, "");
-    newNode->setLabel(-1, "");
     newNode->depth = this->depth + 1;
-    //std::cout << this->depth << " " << MAX_DEPTH << " " << newNode->depth << std::endl;
-    if (newNode->depth > MAX_DEPTH)
-        MAX_DEPTH = newNode->depth;
 
     this->children.push_back(newNode);
     return newNode;
@@ -106,11 +96,49 @@ const size_t TreeNode::getDepth()
 }
 
 
+const size_t TreeNode::getMaxDepth()
+{
+    size_t maxDepth = this->depth;
+    for (TreeNode::iterator it = this->begin(); it != this->end(); it++)
+    {
+        size_t depth = (*it)->getMaxDepth();
+        if (depth > maxDepth)
+            maxDepth = depth;
+    }
+    return maxDepth;
+}
+
+
+void TreeNode::disable()
+{
+    for (TreeNode::iterator it = this->begin(); it != this->end(); it++)
+    {
+        this->disabled_children.push_back(*it);
+    }
+    this->children.erase(this->begin(), this->end());
+
+    double mcl = this->labels.mostCommonValue(0);
+    this->setLabel(mcl, this->labels.attrValue(0, mcl));
+}
+
+
+void TreeNode::enable()
+{
+    for (std::vector<NodePtr>::iterator it = disabled_children.begin(); it != disabled_children.end(); ++it)
+    {
+        this->children.push_back(*it);
+    }
+    this->disabled_children.erase(disabled_children.begin(), disabled_children.end());
+
+    this->setLabel(-1, "");
+}
+
+
 void TreeNode::printTree(NodePtr node)
 {
     std::string space = "   |";
 
-    for (size_t i = 0; i < node->getDepth(); ++i)
+    for (size_t i = 1; i < node->getDepth(); ++i)
         std::cout << space;
 
     std::cout << " " << node->getValueName() << " - ";
@@ -119,7 +147,7 @@ void TreeNode::printTree(NodePtr node)
         std::cout << node->getAttrName();
 
     if (node->isLeaf())
-        std::cout << "***" << node->getLabelName() << "***";
+        std::cout << " - ***" << node->getLabelName() << "***";
     
     std::cout << std::endl;
 

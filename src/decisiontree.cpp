@@ -10,20 +10,25 @@ void DecisionTree::train(Matrix& features, Matrix& labels)
     root = TreeNode::make();
     root->setValue(0, "root");
 
+    // shuffle instances and use unknown nominal values
     features.shuffleRows(m_rand, &labels);
-    features.keepUnknown();
+    features.useUnknown();
 
+    // split validation set
+    Matrix valFeatures;
+    Matrix valLabels;
+    double splitPercent = 0.75;
+    this->splitValidationSet(features, labels, valFeatures, valLabels, splitPercent);
+
+    // begin recursion
     this->partition(root, features, labels);
     TreeNode::printTree(root);
-
-    /*
     std::cout << "\n\n\n\n";
+    std::cout << "Max depth " << root->getMaxDepth() << std::endl;
 
-    std::cout << "copying" << std::endl;
-    TreeNode::NodePtr copy = TreeNode::copy(*(root->begin()));
-    std::cout << "copied" << std::endl;
-    TreeNode::printTree(copy);
-    */
+//    this->prune(valFeatures, valLabels);
+//    TreeNode::printTree(root);
+    
 }
 
 
@@ -71,6 +76,9 @@ bool DecisionTree::partition(TreeNode::NodePtr node, Matrix& features, Matrix& l
 {
     if (features.rows() != labels.rows())
         ThrowError("Partition::Feature and labels matrices should have the same number of nodes.");
+
+    // save labels for later use
+    node->setLabels(labels);
 
     size_t rows = features.rows();
     double dblrows = (double) rows;
@@ -159,9 +167,6 @@ bool DecisionTree::partition(TreeNode::NodePtr node, Matrix& features, Matrix& l
         std::vector<size_t> rowIndices = features.copyReduce(reducedFeatures, maxAttr, value);
         labels.copyReduce(reducedLabels, rowIndices);
 
-        // save labels for later use
-        newNode->setLabels(reducedLabels);
-
         // call partition with that node and reduced matrices
         bool labeled = this->partition(newNode, reducedFeatures, reducedLabels);
         if (!labeled) // then label new node with most common label
@@ -175,9 +180,67 @@ bool DecisionTree::partition(TreeNode::NodePtr node, Matrix& features, Matrix& l
 }
 
 
-void DecisionTree::prune(TreeNode::NodePtr node, const Matrix& validation)
+void DecisionTree::prune(Matrix& valFeatures, Matrix& valLabels)
 {
+    PruneData pruneData;
 
+    // initialize error
+	size_t labelValues = valLabels.valueCount(0);
+    double error = measureAccuracy(valFeatures, valLabels);
+    if (labelValues != 0)
+        error = 1 - error;
+    pruneData.error = error;
+    
+    // Until the pruning does not reduce error
+    while (this->prune(root, valFeatures, valLabels, pruneData))
+    {
+        // disable nodes that reduce error the most
+        std::cout << "disabling attr " << pruneData.pruned->getAttrName() << " value " << pruneData.pruned->getValueName() << std::endl;
+        pruneData.pruned->disable();
+        pruneData.pruned.reset();
+    }
+}
+
+
+bool DecisionTree::prune(TreeNode::NodePtr node, Matrix& valFeatures, Matrix& valLabels, PruneData& pruneData)
+{
+    bool pruned = false;
+
+    if (!node || node->isLeaf())
+        return pruned;
+
+	size_t labelValues = valLabels.valueCount(0);
+
+    for (TreeNode::iterator it = node->begin(); it != node->end(); ++it)
+    {
+        TreeNode::NodePtr child = (*it);
+
+        // recurse to check leaves first
+        if (this->prune(child, valFeatures, valLabels, pruneData))
+            pruned = true;
+        
+        // disable the node to check if the error gets reduced
+        node->disable();
+
+        // measure error (if label is nominal we will get accuracy, so reverse it)
+        double error = this->measureAccuracy(valFeatures, valLabels);
+        if (labelValues != 0)
+            error = 1 - error;
+
+        // re-enable so we can test other prunings to find the best one
+        node->enable();
+
+        // if the error was reduced, this pruning is better
+        if (error < pruneData.error)
+        {
+            //std::cout << "pruning - error was " << pruneData.error << " new pruning got " << error << std::endl;
+            pruneData.pruned = node;
+            pruneData.error = error;
+            pruned = true;
+        }
+    }
+
+    return pruned;
 }
 
 

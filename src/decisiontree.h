@@ -28,13 +28,20 @@ public:
 
 	bool partition(TreeNode::NodePtr, Matrix&, Matrix&);
 
-    static void prune(TreeNode::NodePtr, const Matrix&);
+    void prune(Matrix&, Matrix&);
 
 private:
+
+    struct PruneData {
+        TreeNode::NodePtr pruned;
+        double error;
+    };
 
     Rand m_rand;
     
     TreeNode::NodePtr root;
+
+    bool prune(TreeNode::NodePtr, Matrix&, Matrix&, PruneData&);
 
     double calculateEntropy(Matrix&, Matrix&);
 

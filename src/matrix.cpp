@@ -355,7 +355,7 @@ void Matrix::loadARFF(string fileName)
 	}
 }
 
-void Matrix::keepUnknown()
+void Matrix::useUnknown()
 {
     size_t c = cols();
     for (size_t i = 0; i < c; ++i)
