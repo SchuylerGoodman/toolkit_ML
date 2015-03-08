@@ -22,11 +22,16 @@ void DecisionTree::train(Matrix& features, Matrix& labels)
 
     // begin recursion
     this->partition(root, features, labels);
-    TreeNode::printTree(root);
-    std::cout << "\n\n\n\n";
-    std::cout << "Max depth " << root->getMaxDepth() << std::endl;
+    //TreeNode::printTree(root);
+    //std::cout << "Max depth," << root->getMaxDepth() << std::endl;
+    //std::cout << "Node count," << root->getNodeCount() << std::endl;
+    //std::cout << "\n\n";
 
+//    std::cout << "pruning" << std::endl;
 //    this->prune(valFeatures, valLabels);
+//    std::cout << "Max depth," << root->getMaxDepth() << std::endl;
+//    std::cout << "Node count," << root->getNodeCount() << std::endl;
+//    std::cout << "\n\n";
 //    TreeNode::printTree(root);
     
 }
@@ -72,6 +77,7 @@ void DecisionTree::dive(TreeNode::NodePtr node, const std::vector<double>& featu
     ThrowError("No matching attribute-value pair for input feature");
 }
 
+
 bool DecisionTree::partition(TreeNode::NodePtr node, Matrix& features, Matrix& labels)
 {
     if (features.rows() != labels.rows())
@@ -107,7 +113,13 @@ bool DecisionTree::partition(TreeNode::NodePtr node, Matrix& features, Matrix& l
     for (size_t attr = 0; attr < features.cols(); ++attr)
     {
         std::map<double, size_t> counts = features.getValueCounts(attr);
+
+        // if there is only one value, this attribute doesn't help at all. Just skip it.
+        if (counts.size() == 1)
+            continue;
+
         double info = 0.0;
+        double gainRatio = 0.0;
 
         // for each value
         for (std::map<double, size_t>::iterator it = counts.begin(); it != counts.end(); ++it)
@@ -134,10 +146,14 @@ bool DecisionTree::partition(TreeNode::NodePtr node, Matrix& features, Matrix& l
 
             // calculate info using entropy and row # division
             info += rowRatio * attrEntropy;
+
+            // calculate gain ratio
+            gainRatio -= rowRatio * log2 (rowRatio);
         }
 
         // calculate gain for value.
         double gain = entropy - info;
+        //gain = gain / gainRatio;
 
         // if maximum, save attribute value
         if (gain > maxGain)
@@ -195,7 +211,7 @@ void DecisionTree::prune(Matrix& valFeatures, Matrix& valLabels)
     while (this->prune(root, valFeatures, valLabels, pruneData))
     {
         // disable nodes that reduce error the most
-        std::cout << "disabling attr " << pruneData.pruned->getAttrName() << " value " << pruneData.pruned->getValueName() << std::endl;
+        //std::cout << "disabling attr " << pruneData.pruned->getAttrName() << " value " << pruneData.pruned->getValueName() << std::endl;
         pruneData.pruned->disable();
         pruneData.pruned.reset();
     }

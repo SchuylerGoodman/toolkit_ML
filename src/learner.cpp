@@ -108,13 +108,16 @@ double SupervisedLearner::crossValidate(size_t reps, size_t folds, Matrix& featu
 			train(trainFeatures, trainLabels);
 
 			// Test
+            double trAccuracy = measureAccuracy(trainFeatures, trainLabels);
 			double accuracy = measureAccuracy(testFeatures, testLabels);
 			sum += accuracy;
 
 			// Print intermediate results
 			if(verbose)
 			{
-				cout << "Rep: " << rep << ", Fold: " << fold << ", Accuracy: " << accuracy << "\n";
+				cout << "Rep, " << rep << " - Fold, " << fold << "\n";
+                cout << "Training Set Accuracy, " << trAccuracy << "\n";
+                cout << "Test Set Accuracy, " << accuracy << "\n";
 				cout.flush();
 			}
 		}

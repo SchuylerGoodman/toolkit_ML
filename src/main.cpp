@@ -206,9 +206,9 @@ void doit(ArgParser& parser)
         stats.toCSV();
 /*		for(size_t i = 0; i < stats.cols(); i++)
 			cout << dataset.attrValue(dataset.cols() - 1, i) << ": " << stats[0][i] << "/" << stats[1][i] << "\n";*/
-		cout << "Set accuracy: " << "\n" << accuracy << "\n";
-		cout<< "\nTraining time: " << (timeAfterTraining - timeBeforeTraining) << " seconds\n";
-		cout<< "\nTesting time: " << (timeAfterTesting - timeBeforeTesting) << " seconds\n";
+		cout << "Set accuracy, " << "\n" << accuracy << "\n";
+		cout<< "\nTraining time, " << (timeAfterTraining - timeBeforeTraining) << " seconds\n";
+		cout<< "\nTesting time, " << (timeAfterTesting - timeBeforeTesting) << " seconds\n";
 		cout.flush();
 	}
 	else if ( evaluation.compare ( "static" ) == 0 )
@@ -229,7 +229,7 @@ void doit(ArgParser& parser)
 		cout << "\n\nAccuracy on the training set: (does NOT imply the ability to generalize)\n";
 		for(size_t i = 0; i < stats.cols(); i++)
 			cout << dataset.attrValue(dataset.cols() - 1, i) << ": " << stats[0][i] << "/" << stats[1][i] << "\n";
-		cout << "Set accuracy: " << accuracy << "\n";
+		cout << "Set accuracy, " << accuracy << "\n";
 		cout.flush();
 
 		// Test on the test set
@@ -250,9 +250,9 @@ void doit(ArgParser& parser)
 		cout << "\n\nAccuracy on the test set:\n";
 		for(size_t i = 0; i < stats.cols(); i++)
 			cout << dataset.attrValue(dataset.cols() - 1, i) << ": " << stats[0][i] << "/" << stats[1][i] << "\n";
-		cout << "Set accuracy: " << accuracy << "\n";
-		cout << "\nTraining time: " << (timeAfterTraining - timeBeforeTraining) << " seconds\n";
-		cout << "\nTesting time: " << (timeAfterTesting - timeBeforeTesting) << " seconds\n";
+		cout << "Set accuracy, " << accuracy << "\n";
+		cout << "\nTraining time, " << (timeAfterTraining - timeBeforeTraining) << " seconds\n";
+		cout << "\nTesting time, " << (timeAfterTesting - timeBeforeTesting) << " seconds\n";
 		cout.flush();
 	}
 	else if ( evaluation.compare ( "random" ) == 0 )
@@ -286,7 +286,7 @@ void doit(ArgParser& parser)
         stats.toCSV();
 /*		for(size_t i = 0; i < stats.cols(); i++)
 			cout << dataset.attrValue(dataset.cols() - 1, i) << ": " << stats[0][i] << "/" << stats[1][i] << "\n";*/
-		cout << "Training set accuracy: " << "\n" << accuracy << "\n";
+		cout << "Training set accuracy, " << "\n" << accuracy << "\n";
 		cout.flush();
 
 		// Test on the test set
@@ -302,9 +302,9 @@ void doit(ArgParser& parser)
         stats.toCSV();
 /*		for(size_t i = 0; i < stats.cols(); i++)
 			cout << dataset.attrValue(dataset.cols() - 1, i) << ": " << stats[0][i] << "/" << stats[1][i] << "\n";*/
-		cout << "Test set accuracy: " << "\n" << accuracy << "\n";
-		cout<< "\nTraining time: " << (timeAfterTraining - timeBeforeTraining) << " seconds\n";
-		cout<< "\nTesting time: " << (timeAfterTesting - timeBeforeTesting) << " seconds\n";
+		cout << "Test set accuracy, " << "\n" << accuracy << "\n";
+		cout<< "\nTraining time, " << (timeAfterTraining - timeBeforeTraining) << " seconds\n";
+		cout<< "\nTesting time, " << (timeAfterTesting - timeBeforeTesting) << " seconds\n";
 		cout.flush();
 	}
 	else if ( evaluation.compare ( "cross" ) == 0 )
@@ -317,9 +317,9 @@ void doit(ArgParser& parser)
 		labels.copyPart(dataset, 0, dataset.cols() - labelDims, dataset.rows(), labelDims);
 		double accuracy = learner->crossValidate(1, folds, features, labels, r, true);
 		if(labels.valueCount(0) == 0)
-			cout << "Root Mean Squared Error: " << accuracy << "\n";
+			cout << "Root Mean Squared Error, " << accuracy << "\n";
 		else
-			cout << "Mean predictive accuracy: " << accuracy << "\n";
+			cout << "Mean predictive accuracy, " << accuracy << "\n";
 		cout.flush();
 	}
 }

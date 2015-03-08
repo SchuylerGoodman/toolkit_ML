@@ -109,6 +109,17 @@ const size_t TreeNode::getMaxDepth()
 }
 
 
+const size_t TreeNode::getNodeCount()
+{
+    size_t count = 1;
+    for (TreeNode::iterator it = this->begin(); it != this->end(); it++)
+    {
+        count += (*it)->getNodeCount();
+    }
+    return count;
+}
+
+
 void TreeNode::disable()
 {
     for (TreeNode::iterator it = this->begin(); it != this->end(); it++)
@@ -153,4 +164,6 @@ void TreeNode::printTree(NodePtr node)
 
     for (TreeNode::iterator it = node->begin(); it != node->end(); ++it)
         printTree((*it));
+
+    std::cout.flush();
 }

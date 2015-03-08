@@ -60,8 +60,11 @@ public:
 
     const size_t getDepth();
 
-    // Gets the maximum depth from the context of this
+    // Gets the maximum depth below and including this
     const size_t getMaxDepth();
+
+    // Gets the number of nodes below and including this
+    const size_t getNodeCount();
     
     //++++++++++++++++++++++public methods++++++++++++++++++++++
 
