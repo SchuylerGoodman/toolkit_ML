@@ -12,6 +12,7 @@
 #include "nbperceptron.h"
 #include "backprop.h"
 #include "decisiontree.h"
+#include "knn.h"
 #include <iostream>
 #include <fstream>
 #include <map>
@@ -145,7 +146,7 @@ SupervisedLearner* getLearner(string model, Rand& r)
 	else if (model.compare("naivebayes") == 0)
 		ThrowError("Sorry, ", model, " is not yet implemented");
 	else if (model.compare("knn") == 0)
-		ThrowError("Sorry, ", model, " is not yet implemented");
+        return new KNN(r);
 	else
 		ThrowError("Unrecognized model: ", model);
 	return NULL;

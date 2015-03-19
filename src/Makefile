@@ -38,6 +38,7 @@ CPP_FILES =\
 	backprop.cpp\
 	decisiontree.cpp\
 	treenode.cpp\
+	knn.cpp\
 
 ################
 # Lists

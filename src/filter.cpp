@@ -53,7 +53,7 @@ void Normalize::trainFilter(Matrix& features, Matrix& labels)
 	m_featureMins.clear();
 	m_featureMaxs.clear();
 	size_t c = features.cols();
-	m_featureMins.reserve(c);
+ 	m_featureMins.reserve(c);
 	m_featureMaxs.reserve(c);
 	for(size_t i = 0; i < c; i++)
 	{
@@ -346,7 +346,7 @@ std::vector<double> Discretize::filterFeatures(const std::vector<double>& before
 				after.push_back(UNKNOWN_VALUE);
 			else
 			{
-				size_t bucket = size_t(floor((before[c] - m_featureMins[c]) * m_bins / (m_featureMins[c] - m_featureMins[c])));
+				size_t bucket = size_t(floor((before[c] - m_featureMins[c]) * m_bins / (m_featureMaxs[c] - m_featureMins[c])));
 				after.push_back(std::max((size_t)0, std::min(m_bins - 1, bucket)));
 			}
 		}

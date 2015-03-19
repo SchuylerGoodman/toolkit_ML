@@ -364,7 +364,7 @@ void Matrix::useUnknown()
         if (rowIs.size() > 0)
         {
             size_t vals = valueCount ( i );
-            if ( vals > 0 ) //if the attribute is nominal...
+            if ( vals > 0 ) //if the attribute is nominal... 
             {
                 std::string val = "?";
                 size_t e = m_enum_to_str[i].end()->first;
@@ -385,6 +385,7 @@ void Matrix::useUnknown()
                         this->row(row)[i] = e;
                 }
             }
+            //continuous values are not enumerated, so it is ok for them to have UNKNOWN_VALUE
         }
     }
 }
