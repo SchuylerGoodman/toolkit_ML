@@ -27,20 +27,22 @@ public:
 
     void predict(const std::vector<double>&, std::vector<double>&);
 
+    virtual double dist(const std::vector<double>&, const std::vector<double>&);
+
 private:
 
     Rand m_rand;
 
     size_t k;
 
-    Matrix features;
-    Matrix labels;
-
-    double dist(const std::vector<double>&, const std::vector<double>&);
-
     double replaceTop(std::vector<RowDistance>&, size_t, double);
 
-    double vote(const std::vector<RowDistance>&, bool weight = true);
+    double vote(const std::vector<RowDistance>&, bool weight = false);
+
+protected:
+
+    Matrix features;
+    Matrix labels;
 
 };
 
@@ -57,16 +59,33 @@ public:
 
     void predict(const std::vector<double>&, std::vector<double>&);
 
+    virtual double dist(const std::vector<double>&, const std::vector<double>&);
+
 private:
+
+    std::map<double, size_t> labelValueCounts;
 
 	size_t m_bins;
 	std::vector<double> m_featureMins;
 	std::vector<double> m_featureMaxs;
+    std::vector<double> m_featureWidths;
+
+    std::map<size_t, std::map<double, std::map<double, double> > > probabilities;
 
     void trainFilter(Matrix&);
     Matrix discretizeFeatures(Matrix&);
     
+    // Based off of equation (18) from http://axon.cs.byu.edu/~martinez/classes/478/readings/Wilson_distance.pdf
     std::vector<double> discretize(const std::vector<double>&);
+
+    // Based off of part 3 of equation (18) from http://axon.cs.byu.edu/~martinez/classes/478/readings/Wilson_distance.pdf
+    size_t getBin(double, double, double);
+
+    // Based off of equation (23) from http://axon.cs.byu.edu/~martinez/classes/478/readings/Wilson_distance.pdf
+    double calcPac(double, size_t, size_t, double);
+
+    // Based off of equation (24) from http://axon.cs.byu.edu/~martinez/classes/478/readings/Wilson_distance.pdf
+    double calcMid(size_t, size_t);
 
 };
 

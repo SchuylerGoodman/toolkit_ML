@@ -13,6 +13,8 @@
 #include <sstream>
 #include <math.h>
 #include <iostream>
+#include <cstdio>
+#include <ctime>
 
 using std::vector;
 using std::cout;
@@ -27,6 +29,9 @@ double SupervisedLearner::measureAccuracy(Matrix& features, Matrix& labels, Matr
 	if(features.rows() == 0)
 		ThrowError("Expected at least one row");
 
+    std::clock_t start;
+    start = std::clock();
+
 	// Measure Accuracy
 	size_t labelValues = labels.valueCount(0);
 	if(labelValues == 0) // If the label is continuous...
@@ -40,10 +45,19 @@ double SupervisedLearner::measureAccuracy(Matrix& features, Matrix& labels, Matr
 		{
 			const vector<double>& feat = features.row(i);
 			vector<double>& targ = labels.row(i);
-			pred[0] = labels.row(i)[0];
+			pred[0] = labels[i][0];
 			predict(feat, pred);
 			double delta = targ[0] - pred[0];
 			sse += (delta * delta);
+
+            if (i % 100 == 0)
+            {
+                //std::cout << i << " out of " << features.rows() << " predicted.";
+                std::clock_t next;
+                next = std::clock();
+                //std::cout << " time elapsed " << (next - start) / (double)CLOCKS_PER_SEC << std::endl;
+                start = next;
+            }
 		}
 		return sqrt(sse / features.rows());
 	}
@@ -77,6 +91,15 @@ double SupervisedLearner::measureAccuracy(Matrix& features, Matrix& labels, Matr
 			}
             if(pOutStats)
                 (*pOutStats)[pred][targ]++; // increment the confusion matrix count
+
+            if (i % 100 == 0)
+            {
+                //std::cout << i << " out of " << features.rows() << " predicted.";
+                std::clock_t next;
+                next = std::clock();
+                //std::cout << " time elapsed " << (next - start) / (double)CLOCKS_PER_SEC << std::endl;
+                start = next;
+            }
 		}
 		return (double)correctCount / features.rows();
 	}

@@ -147,6 +147,8 @@ SupervisedLearner* getLearner(string model, Rand& r)
 		ThrowError("Sorry, ", model, " is not yet implemented");
 	else if (model.compare("knn") == 0)
         return new KNN(r);
+	else if (model.compare("ivdm") == 0)
+        return new IVDM(r);
 	else
 		ThrowError("Unrecognized model: ", model);
 	return NULL;
